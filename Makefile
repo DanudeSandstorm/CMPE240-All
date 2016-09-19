@@ -10,8 +10,8 @@
 # Replace with the path to your yagarto install directory.
 # Note: Any paths with spaces in it must have quotes around them, like below:
 # PREFIX ?= "/C/yagarto-20121222"
-PREFIX ?= "/D/linaro"
-ARMGNU ?= $(PREFIX)/bin/arm-eabi
+PREFIX ?= "/home/sandstorm/x86_64_arm-linux-gnueabihf"
+ARMGNU ?= $(PREFIX)/bin/arm-linux-gnueabihf
 
 # Uncomment to create a C assembler listing
 CASM_LIST = -Wa,-adhln	> $(BUILD)$*.lst
