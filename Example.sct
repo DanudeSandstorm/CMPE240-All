@@ -1,0 +1,17 @@
+LOAD 0x0000
+{
+    EXEC_ROM +0
+    {
+        *(+RO)
+    }
+    RAM +0
+    {
+        *(+RW,+ZI)
+    }
+    HEAP +0x100 EMPTY 0x100
+    {
+    }
+    STACK +0 EMPTY 0x400
+    {
+    }
+}
