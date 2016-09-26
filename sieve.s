@@ -65,7 +65,7 @@ goback
 
 Loop b Loop ; infinite loop
 	AREA UserData, DATA, READWRITE, ALIGN=3
-N EQU 4
+N EQU 10
 results % (N+1) * 4
 numbers fill (N+1) * 4, 0
 	END
