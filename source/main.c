@@ -28,13 +28,13 @@ int main()
     put_string("Hello, World!\r\n\0");
 	
 	// Remove this to access code below
-	while (1);
+    //	while (1);
 
 	/* 
 	/ UNCOMMENT TO TEST GET_CHAR AND GET_STRING
 	/ WILL ECHO INPUT FROM KEYBOARD, AND PRINT STRING
 	/ IF ENTER IS PRESSED...
-	/
+	*/
     while (1)
     {
         size_t charsGot = get_string(buffer, bufferSize);
@@ -49,7 +49,6 @@ int main()
         put_string(buffer);
         put_string("\r\n");
     }
-	*/
     
     return 0;
 }

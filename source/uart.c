@@ -56,7 +56,7 @@ void wait_for_rx_slot()
 void wait_for_rx_has_char()
 {
     // Spin while the Rx FIFO is empty
-    while (((volatile uint32_t)uart[UART0_FR]) & TX_FIFO_EMPTY)
+    while (((volatile uint32_t)uart[UART0_FR]) & RX_FIFO_EMPTY)
 	{
 		//NOOP
 	}
