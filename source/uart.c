@@ -26,7 +26,7 @@
 void wait_for_tx_slot()
 {
     // Spin while the Tx FIFO is full
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & TX_FIFO_FULL)
 	{
 		// NOOP
 	}
@@ -36,7 +36,7 @@ void wait_for_tx_slot()
 void wait_for_uart_idle()
 {
     //Spin while the UART is busy transmitting
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & UART_BUSY_TX)
 	{
 		//NOOP
 	}
@@ -46,7 +46,7 @@ void wait_for_uart_idle()
 void wait_for_rx_slot()
 {
     // Spin while the Rx FIFO is full
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & RX_FIFO_FULL)
 	{
 		//NOOP
 	}
@@ -56,7 +56,7 @@ void wait_for_rx_slot()
 void wait_for_rx_has_char()
 {
     // Spin while the Rx FIFO is empty
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & TX_FIFO_EMPTY)
 	{
 		//NOOP
 	}
@@ -84,7 +84,7 @@ void init_uart()
     // that GPIO 14 is TXD, GPIO 15 is RXD, and they must be set
     // to use alternate function 0 in select register 1.
     // The bits must be set to 100 for GPIO 15 and 14.
-    gpio[GPFSEL1] |= 0x<<PRELAB - FILL IN THE HEX>>;
+    gpio[GPFSEL1] |= 0x024000;
 
     // According to the BCM2835 manual page 185, we
     // need to do the following to enable UART.
@@ -130,8 +130,8 @@ void init_uart()
     // 48000000 / (16 * 115200), which is 26.0416, or about 26.
     // The fractional part of the register is 0.0416
     // So FBRD = 0.0416 * 64 + 0.5 which is 1.3312, or ~1.
-    uart[UART0_IBRD] = <<PRELAB - PROVIDE THE CORRECT INTEGER>>;
-    uart[UART0_FBRD] = <<PRELAB - PROVIDE THE CORRECT INTEGER>>;
+    uart[UART0_IBRD] = 26;
+    uart[UART0_FBRD] = 1;
     // For 9600 baud - stability check - use this for debugging purposes
     //uart[UART0_IBRD] = 312;
     //uart[UART0_FBRD] = 32;
@@ -141,9 +141,8 @@ void init_uart()
 	*/
 	
     //Enable FIFOs and set word length by shifting in '1's
-    uart[UART0_LCRH] |= (<<PRELAB - ENABLE TX FIFO>>) |
-									   (<<PRELAB - ENABLE RX FIFO>>) |
-									   (<<PRELAB - SET WORD LENGTH>>);
+    uart[UART0_LCRH] |= ((0x1 << 4) |
+                        (0x3 << 5));
 
     // Mask all interrupts
     uart[UART0_IMSC] |= (
@@ -158,9 +157,9 @@ void init_uart()
 	*/
 	
     // Enable Receive, Enable Tx, Enable UART.
-    uart[UART0_CR] |= ((<<PRELAB - RX ENABLE>>) | 
-									(<<PRELAB - TX ENABLE>>) | 
-									(<<PRELAB - UART ENABLE>>));
+    uart[UART0_CR] |= ((0x1 << 9) | 
+                        (0x1 << 8) | 
+						(0x1));
 }
 
 /// Gets a single character from the UART port.
@@ -212,7 +211,7 @@ extern size_t get_string(char* buffer, size_t buffer_size)
         {
             // <<ECHO THE CHAR HERE>>
             
-			// <<INCREMENT THE BUFFER COUNT AND ADD TO BUFFER>>
+			// <<ADD TO BUFFER AND INCREMENT THE BUFFER COUNT>>.
 			
         }
         // OS dependent.  May get \r, may get \n.  Either way, we'll
