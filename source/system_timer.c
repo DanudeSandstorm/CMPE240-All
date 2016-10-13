@@ -14,9 +14,9 @@ void timer_delay_us(uint32_t delayUs)
     sys_timer[SYS_TIMER_CS] |= 1;
 
     // Now we spin until the CS register
-    // has a 1 in the 0 position, then we know
-    // our timer has expired.
-    while(sys_timer[SYS_TIMER_CS] & 0x1 == 1) {}
+    // has a 1 in the 0 position, 
+    // then we know our timer has expired.
+    while(sys_timer[SYS_TIMER_CS] & 0x1 == 0) {}
     
     return;
 }

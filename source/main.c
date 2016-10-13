@@ -7,12 +7,14 @@ void blink_once()
     // Turn on LED
     gpio[GPSET0] = 0x010000;
     
-    
     //Delay
     timer_delay_sec(1);
 
     // Turn off LED
     gpio[GPCLR0] = 0x010000;
+
+    //Delay
+    timer_delay_sec(1);
 }
 
 void blink_code(uint32_t err)
@@ -33,7 +35,7 @@ int main()
     const int bufferSize = 80;
 
     // Init GPIO select for external LED
-    gpio[GPFSEL1] = 0x040000;
+    gpio[GPFSEL1] = 0x040000; // Selected pin 16
 
     // Init uart for debugging purposes
     init_uart();
@@ -42,15 +44,24 @@ int main()
     char buffer [bufferSize];
 
     // You might need a count for something
-    uint32_t count = 1;
+    uint32_t blinkCount = 1;
 
     // Mainline loop
     while (1)
     {
-        // implement error code described in lab
+        
+        // Set a blink count to 0 every 10 loops
+        blinkCount = blinkCount % 10;
 
-        // call blink_code at some point
-        blink_code(     );
+        // If the blink count is not 0, 
+        // call the blink_code function
+        if (blinkCount != 0)
+        {
+            blink_code(blinkCount);
+        }
+
+        // Increment blink count
+        blinkCount++;
 
     }
     
