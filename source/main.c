@@ -1,6 +1,12 @@
 #include "gpio.h"
 #include "system_timer.h"
 #include "uart.h"
+#include "debug.h"
+
+int mod (int a, int b)
+{
+   return a - b * (a / b);
+}
 
 void blink_once()
 {

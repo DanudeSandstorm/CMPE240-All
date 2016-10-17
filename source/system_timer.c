@@ -16,7 +16,7 @@ void timer_delay_us(uint32_t delayUs)
     // Now we spin until the CS register
     // has a 1 in the 0 position, 
     // then we know our timer has expired.
-    while(sys_timer[SYS_TIMER_CS] & 0x1 == 0) {}
+    while((sys_timer[SYS_TIMER_CS] & 0x1) == 0) {}
     
     return;
 }
@@ -24,7 +24,7 @@ void timer_delay_us(uint32_t delayUs)
 void timer_delay_ms(uint32_t delayMs)
 {
     // scale the microsecond delay appropriately
-    timer_delay_ms(delayMs * 1000);
+    timer_delay_us(delayMs * 1000);
 }
 
 void timer_delay_sec(uint32_t delaySec)
