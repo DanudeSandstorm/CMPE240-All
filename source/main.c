@@ -5,9 +5,16 @@
 
 void logic(const char* h1, const char* i1, const char* h2, const char* i2, const char* h3);
 
-uint8_t calc(uint8_t w, uint8_t x, uint8_t y, uint8_t z, const char* input);
+uint8_t calc(const char* input, int i);
 
-void print_result(uint8_t* r1, uint8_t* r2);
+void print_result(const char* h1, const char* h2, const char* h3,
+    uint8_t* r1, uint8_t* r2);
+
+//Truth Table
+const uint8_t w[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
+const uint8_t x[16] = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
+const uint8_t y[16] = {0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1};
+const uint8_t z[16] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
 void blink_once()
 {
@@ -46,13 +53,27 @@ int main()
     init_uart();
     char buffer [bufferSize];
 
-    logic("f", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
-        "g", "a'd'+ac'd+bc",
-        "Boolean Equivalence");
+    while (1)
+    {
+        size_t charsGot = get_string(buffer, bufferSize);
+        char ch = buffer[0];
 
-    logic("R1", "b'd'+bcd'",
-        "R2", "b'd'+a'bc",
-        "Don't Care");
+        switch (ch)
+        {
+            case '1':
+                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
+                    "g ", "a'd'+ac'd+bc",
+                    "Boolean Equivalence");
+                break;
+            case '2':
+                logic("R1", "b'd'+bcd'",
+                    "R2", "b'd'+a'bc",
+                    "Don't Care");
+                break;
+            default:
+                put_string("Invalid Input\r\n");
+        }
+    }
 
     return 0;
 }
@@ -63,88 +84,74 @@ Prints truth table and the resulting values for each input
 */
 void logic(const char* h1, const char* i1, const char* h2, const char* i2, const char* h3)
 {
-    //Truth Table
-    uint8_t w[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
-    uint8_t x[16] = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
-    uint8_t y[16] = {0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1};
-    uint8_t z[16] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
-
     //Results
     uint8_t r1[16], r2[16];
 
     //For each combination in the truth table (16)
     for (int i = 0; i < 16; i++)
     {
-        r1[i] = calc(w[i], x[i], y[i], x[i], i1);
-        r2[i] = calc(w[i], x[i], y[i], x[i], i2);
+        r1[i] = calc(i1, i);
+        r2[i] = calc(i2, i);
     }
 
-    //Print Header
-    //const char* line = "W X Y Z " + h1 + " " + h2 + " – " + h3 + "\r\n\0";
-    char line[32];
-    sprintf(line, "W X Y Z %s %s - %s\r\n\0", h1, h2, h3);
-    put_string(line);
-    // put_string("W X Y Z ");
-    // put_string(h1);
-    // put_string();
-
-    print_result(r1, r2);
+    print_result(h1, h2, h3, r1, r2);
 }
 
 /*
-Params: Values of w, x, y, z, and the input char array 
+Params: input char array, current index
 */
-uint8_t calc(uint8_t w, uint8_t x, uint8_t y, uint8_t z, const char* input)
+uint8_t calc(const char* input, int i)
 {
     uint8_t result = 0, tmp = 0;
     int length = (sizeof(input) / sizeof(input[0])); //length of array
 
     uint8_t not = 0;
-    for (int i = 0; i < length; i++)
+    for (int j = 0; j < length; j++)
     {
         
         // Checks next bit; check for index out of range
-        if (i+1 < length)
+        if (j+1 < length)
         {
             //Checks if next character is 'not'
-            if (input[i+1] == '\'')
+            if (input[j+1] == '\'')
             {
                 not = 1;
             }
             // If or opperator '+', result equals bitwise or with tmp, 
             // reset tmp (tmp = 0),
             // skip next character
-            else if (input[i+1] == '+')
+            else if (input[j+1] == '+')
             {
                 result |= tmp;
                 tmp = 0;
-                i++;
+                j++;
             }            
         }
 
         //Ands temp with the corrisponding value
         //(bitwise or for when value is not)
-        switch (input[i]) 
+        switch (input[j]) 
         {
             case 'w':
-                tmp &= w ^ not;
+                tmp &= w[i] ^ not;
                 break;
             case 'x':
-                tmp &= x ^ not;
+                tmp &= x[i] ^ not;
                 break;
             case 'y':
-                tmp &= y ^ not;
+                tmp &= y[i] ^ not;
                 break;
             case 'z':
-                tmp &= z ^ not;
+                tmp &= z[i] ^ not;
                 break;
         }
 
-        //Skip next character
+        //If not was toggled
         //Reset not
+        //Skip next character
         if (not == 1) {
-            i++;
             not = 0;
+            j++;
         }
 
     }
@@ -152,12 +159,22 @@ uint8_t calc(uint8_t w, uint8_t x, uint8_t y, uint8_t z, const char* input)
     return result;
 }
 
-void print_result(uint8_t* r1, uint8_t* r2)
+void print_result(const char* h1, const char* h2, const char* h3,
+    uint8_t* r1, uint8_t* r2)
 {
+    char line[32];
+
+    //Print Header
+    //const char* line = "W X Y Z " + h1 + " " + h2 + " – " + h3 + "\r\n\0";
+    sprintf(line, "W X Y Z %s %s - %s\r\n\0", h1, h2, h3);
+    put_string(line);
+
     for (int i = 0; i < 16; i++)
     {
         //Print results for each combination
-        //line = w[i] + x[i] + y[i] + z[i] + "\r\n\0";
-        //put_string(line);
+        //line = w[i] + x[i] + y[i] + z[i] + r1[i] + r2[i] + "\r\n\0";
+        sprintf(line, "%d %d %d %d  %d  %d\r\n\0", 
+            w[i], x[i], y[i], z[i], r1[i], r2[i]);
+        put_string(line);
     }
 }
