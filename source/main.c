@@ -3,6 +3,9 @@
 #include "uart.h"
 #include "printf.h"
 
+/** Function Declerations **/
+void blink_once(int pin1, int pin2);
+
 void logic(const char* h1, const char* i1, const char* h2, const char* i2, const char* h3);
 
 uint8_t calc(const char* input, int i);
@@ -10,43 +13,21 @@ uint8_t calc(const char* input, int i);
 void print_result(const char* h1, const char* h2, const char* h3,
     uint8_t* r1, uint8_t* r2);
 
-//Truth Table
+//Global Truth Table
 const uint8_t w[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
 const uint8_t x[16] = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
 const uint8_t y[16] = {0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1};
 const uint8_t z[16] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
-void blink_once()
-{
-    // Turn on GPIO 16
-    gpio[GPSET0] |= 1 << 16;
+//Toggle the use of LEDs
+uint8_t led = 0;
 
-    timer_delay_ms(500);
-
-    // Turn off GPIO 16
-    gpio[GPCLR0] |= 1 << 16;
-
-    timer_delay_ms(500);
-}
-
-void blink_code(uint32_t err)
-{
-    for(int i = 0; i < err; ++i)
-    {
-        blink_once();
-    }
-
-    // Only delay 4 seconds, since we delay for 1 additional
-    // second in blink_once().
-    timer_delay_ms(4500);
-}
-
+// Implement Lab 4 as described in the lab manual
 int main()
 {
-    // Implement Lab 4 as described in the lab manual
-
     // Init GPIO select for external LED
     gpio[GPFSEL1] = 0x040000; // Selected pin 16
+    gpio[GPFSEL2] = 0x000001; // Selected pin 20
 
     //UART
     const int bufferSize = 80;
@@ -70,6 +51,8 @@ int main()
                     "R2", "b'd'+a'bc",
                     "Don't Care");
                 break;
+            case '3':
+                led ^= 1; //toggle led usage
             default:
                 put_string("Invalid Input\r\n");
         }
@@ -81,6 +64,7 @@ int main()
 /*
 Params: Header1, Input1, Header2, Input2, Title
 Prints truth table and the resulting values for each input
+Headers must be 2 characters wide
 */
 void logic(const char* h1, const char* i1, const char* h2, const char* i2, const char* h3)
 {
@@ -176,5 +160,37 @@ void print_result(const char* h1, const char* h2, const char* h3,
         sprintf(line, "%d %d %d %d  %d  %d\r\n\0", 
             w[i], x[i], y[i], z[i], r1[i], r2[i]);
         put_string(line);
+        
+        if (led == 1)
+        {
+            //LED blink code
+            blink_once(r1[i], r2[i]);
+            //delay 2 seconds between blink code
+            timer_delay_ms(2000); 
+        }
     }
+}
+
+/*
+Params: the state of the pins
+If set to 1, the pin turns on,
+delays for .5 seconds,
+and then turns off
+*/
+void blink_once(int pin1, int pin2)
+{
+    // Turn on GPIO 16 if true
+    if (pin1 == 1)
+        gpio[GPSET0] |= 1 << 16;
+
+    // Turn on GPIO 20 if true
+    if (pin2 == 1)
+        gpio[GPSET0] |= 1 << 20;
+
+    //Delay
+    timer_delay_ms(500);
+
+    // Turn off GPIO 16 & 20
+    gpio[GPCLR0] |= 1 << 16;
+    gpio[GPCLR0] |= 1 << 20;
 }
