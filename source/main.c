@@ -1,10 +1,13 @@
 #include "gpio.h"
 #include "system_timer.h"
 #include "uart.h"
+#include "printf.h"
 
 void logic(const char* h1, const char* i1, const char* h2, const char* i2, const char* h3);
 
 uint8_t calc(uint8_t w, uint8_t x, uint8_t y, uint8_t z, const char* input);
+
+void print_result(uint8_t* r1, uint8_t* r2);
 
 void blink_once()
 {
@@ -47,8 +50,8 @@ int main()
         "g", "a'd'+ac'd+bc",
         "Boolean Equivalence");
 
-    logic("R1", "",
-        "R2", "",
+    logic("R1", "b'd'+bcd'",
+        "R2", "b'd'+a'bc",
         "Don't Care");
 
     return 0;
@@ -66,20 +69,26 @@ void logic(const char* h1, const char* i1, const char* h2, const char* i2, const
     uint8_t y[16] = {0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1};
     uint8_t z[16] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
-    //Results array
+    //Results
     uint8_t r1[16], r2[16];
 
-    //For each combonation in the truth table (16)
+    //For each combination in the truth table (16)
     for (int i = 0; i < 16; i++)
     {
         r1[i] = calc(w[i], x[i], y[i], x[i], i1);
-
-        r2[i] = calc(w[i], x[i], y[i], x[i], i2);;
+        r2[i] = calc(w[i], x[i], y[i], x[i], i2);
     }
 
-    //print
-    //PutString();
-    
+    //Print Header
+    //const char* line = "W X Y Z " + h1 + " " + h2 + " – " + h3 + "\r\n\0";
+    char line[32];
+    sprintf(line, "W X Y Z %s %s - %s\r\n\0", h1, h2, h3);
+    put_string(line);
+    // put_string("W X Y Z ");
+    // put_string(h1);
+    // put_string();
+
+    print_result(r1, r2);
 }
 
 /*
@@ -141,4 +150,14 @@ uint8_t calc(uint8_t w, uint8_t x, uint8_t y, uint8_t z, const char* input)
     }
 
     return result;
+}
+
+void print_result(uint8_t* r1, uint8_t* r2)
+{
+    for (int i = 0; i < 16; i++)
+    {
+        //Print results for each combination
+        //line = w[i] + x[i] + y[i] + z[i] + "\r\n\0";
+        //put_string(line);
+    }
 }
