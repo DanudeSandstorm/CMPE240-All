@@ -45,7 +45,7 @@ int main()
         switch (ch)
         {
             case '1':
-                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
+                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
                     "g ", "a'd'+ac'd+bc",
                     "Boolean Equivalence");
                 break;
@@ -126,14 +126,24 @@ uint8_t calc(const char* input, int i)
             case 'z':
                 tmp &= (z[i] ^ not);
                 break;
+            default:
+                break;
         }
 
-        printf("%c %d\r\n", input[j], tmp);
+        printf("%c : %d, ", input[j], tmp);
+
+        //If not was toggled:
+        //Reset not and skip character
+        if (not == 1) {
+            not = 0;
+            j++;
+        }
+
         // Checks next bit; check for index out of range
-        // If or opperator '+':
+        // If or opperator '+' or is the last character:
         // result equals bitwise or with tmp, 
         // reset tmp (tmp = 1),
-        // skip next character
+        // skip character
         if (
             (j+1 > size) 
             ||
@@ -147,14 +157,6 @@ uint8_t calc(const char* input, int i)
             put_char(result | 0x30);
             put_string("\r\n");
         }    
-
-        //If not was toggled
-        //Reset not
-        //Skip next character
-        if (not == 1) {
-            not = 0;
-            j++;
-        }
 
     }
 
