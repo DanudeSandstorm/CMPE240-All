@@ -13,6 +13,8 @@ uint8_t calc(const char* input, int i);
 void print_result(const char* h1, const char* h2, const char* h3,
     uint8_t* r1, uint8_t* r2);
 
+unsigned int length(char const* s);
+
 //Global Truth Table
 const uint8_t w[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
 const uint8_t x[16] = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
@@ -43,7 +45,7 @@ int main()
         switch (ch)
         {
             case '1':
-                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
+                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
                     "g ", "a'd'+ac'd+bc",
                     "Boolean Equivalence");
                 break;
@@ -54,6 +56,7 @@ int main()
                 break;
             case '3':
                 led ^= 1; //toggle led usage
+                break;
             default:
                 put_string("Invalid Input\r\n");
         }
@@ -87,30 +90,20 @@ Params: input char array, current index
 */
 uint8_t calc(const char* input, int i)
 {
-    uint8_t result = 1, tmp = 1; //Starts 1 or result will always be 0
-    int length = (sizeof(input) / sizeof(input[0])); //length of array
-
+    unsigned int size = length(input) - 1; //size minus null terminator
+    uint8_t result = 0, tmp = 1; //Starts 1 or result will always be 0
+    put_string(input);
+    put_string("\r\n");
+    printf("%d: %d\r\n", sizeof(input), size);
     uint8_t not = 0;
-    for (int j = 0; j < length; j++)
+    for (unsigned int j = 0; j < size; j++)
     {
         
-        // Checks next bit; check for index out of range
-        if (j+1 < length)
+        //Checks next bit; check for index out of range
+        //Checks if next character is 'not'
+        if ((j+1 < size) && (input[j+1] == '\''))
         {
-            //Checks if next character is 'not'
-            if (input[j+1] == '\'')
-            {
-                not = 1;
-            }
-            // If or opperator '+', result equals bitwise or with tmp, 
-            // reset tmp (tmp = 0),
-            // skip next character
-            else if (input[j+1] == '+')
-            {
-                result |= tmp;
-                tmp = 0;
-                j++;
-            }            
+            not = 1;
         }
 
         //Ands temp with the corrisponding value
@@ -119,21 +112,41 @@ uint8_t calc(const char* input, int i)
         {
             case 'a':
             case 'w':
-                tmp &= w[i] ^ not;
+                tmp &= (w[i] ^ not);
                 break;
             case 'b':
             case 'x':
-                tmp &= x[i] ^ not;
+                tmp &= (x[i] ^ not);
                 break;
             case 'c':
             case 'y':
-                tmp &= y[i] ^ not;
+                tmp &= (y[i] ^ not);
                 break;
             case 'd':
             case 'z':
-                tmp &= z[i] ^ not;
+                tmp &= (z[i] ^ not);
                 break;
         }
+
+        printf("%c %d\r\n", input[j], tmp);
+        // Checks next bit; check for index out of range
+        // If or opperator '+':
+        // result equals bitwise or with tmp, 
+        // reset tmp (tmp = 1),
+        // skip next character
+        if (
+            (j+1 > size) 
+            ||
+            ((j+1 < size) && (input[j+1] == '+'))
+        )
+        {
+            result |= tmp;
+            tmp = 1;
+            j++;
+            put_string("result ");
+            put_char(result | 0x30);
+            put_string("\r\n");
+        }    
 
         //If not was toggled
         //Reset not
@@ -151,20 +164,16 @@ uint8_t calc(const char* input, int i)
 void print_result(const char* h1, const char* h2, const char* h3,
     uint8_t* r1, uint8_t* r2)
 {
-    char line[32];
-
     //Print Header
     //const char* line = "W X Y Z " + h1 + " " + h2 + " – " + h3 + "\r\n\0";
-    sprintf(line, "W X Y Z %s %s - %s\r\n\0", h1, h2, h3);
-    put_string(line);
+    printf("W X Y Z %s %s - %s\r\n\0", h1, h2, h3);
 
     for (int i = 0; i < 16; i++)
     {
         //Print results for each combination
         //line = w[i] + x[i] + y[i] + z[i] + r1[i] + r2[i] + "\r\n\0";
-        sprintf(line, "%d %d %d %d  %d  %d\r\n\0", 
+        printf("%d %d %d %d  %d  %d\r\n\0", 
             w[i], x[i], y[i], z[i], r1[i], r2[i]);
-        put_string(line);
         
         if (led == 1)
         {
@@ -199,3 +208,23 @@ void blink_once(int pin1, int pin2)
     gpio[GPCLR0] |= 1 << 16;
     gpio[GPCLR0] |= 1 << 20;
 }
+
+/*
+Returns the length (amount of characters) in a char array
+*/
+unsigned int length(char const* s) {
+    unsigned int i = 0;
+    while (*s++ != '\0')
+        ++i;
+
+    return i;
+}
+/*
+unsigned int length(char const* s) {
+    unsigned int i = 0;
+    while (s[i] != '\0')
+        ++i;
+
+    return i;
+}
+*/
