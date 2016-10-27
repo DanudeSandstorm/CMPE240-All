@@ -92,19 +92,15 @@ uint8_t calc(const char* input, int i)
 {
     unsigned int size = length(input) - 1; //size minus null terminator
     uint8_t result = 0, tmp = 1; //Starts 1 or result will always be 0
-    put_string(input);
-    put_string("\r\n");
-    printf("%d: %d\r\n", sizeof(input), size);
-    uint8_t not = 0;
+    uint8_t not = 0; //Is bit inversed?
+
     for (unsigned int j = 0; j < size; j++)
     {
         
         //Checks next bit; check for index out of range
         //Checks if next character is 'not'
         if ((j+1 < size) && (input[j+1] == '\''))
-        {
             not = 1;
-        }
 
         //Ands temp with the corrisponding value
         //(bitwise or for when value is not)
@@ -130,8 +126,6 @@ uint8_t calc(const char* input, int i)
                 break;
         }
 
-        printf("%c : %d, ", input[j], tmp);
-
         //If not was toggled:
         //Reset not and skip character
         if (not == 1) {
@@ -153,9 +147,6 @@ uint8_t calc(const char* input, int i)
             result |= tmp;
             tmp = 1;
             j++;
-            put_string("result ");
-            put_char(result | 0x30);
-            put_string("\r\n");
         }    
 
     }
