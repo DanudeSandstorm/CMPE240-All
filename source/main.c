@@ -34,6 +34,7 @@ int main()
     init_uart();
     char buffer [bufferSize];
 
+    put_string("Press 1 for Equ1, 2 for Equ2, or 3 to toggle LEDs\r\n");
     while (1)
     {
         size_t charsGot = get_string(buffer, bufferSize);
