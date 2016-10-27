@@ -86,7 +86,7 @@ Params: input char array, current index
 */
 uint8_t calc(const char* input, int i)
 {
-    uint8_t result = 0, tmp = 0;
+    uint8_t result = 1, tmp = 1; //Starts 1 or result will always be 0
     int length = (sizeof(input) / sizeof(input[0])); //length of array
 
     uint8_t not = 0;
