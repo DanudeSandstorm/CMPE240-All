@@ -116,15 +116,19 @@ uint8_t calc(const char* input, int i)
         //(bitwise or for when value is not)
         switch (input[j]) 
         {
+            case 'a':
             case 'w':
                 tmp &= w[i] ^ not;
                 break;
+            case 'b':
             case 'x':
                 tmp &= x[i] ^ not;
                 break;
+            case 'c':
             case 'y':
                 tmp &= y[i] ^ not;
                 break;
+            case 'd':
             case 'z':
                 tmp &= z[i] ^ not;
                 break;
