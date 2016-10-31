@@ -46,7 +46,7 @@ int main()
         {
             case '1':
                 logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
-                    "g ", "a'd'+ac'd+bc",
+                    "g ", "x'z'+xy+wy'z",
                     "Boolean Equivalence");
                 break;
             case '2':
