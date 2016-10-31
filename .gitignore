@@ -1,7 +1,5 @@
-*.img
-*.list
-*.map
-*.o
-*.lst
-*.d
-*.elf
+.vscode
+/bin
+/build
+*.docx
+*.pdf

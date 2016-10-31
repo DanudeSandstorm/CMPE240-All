@@ -9,10 +9,9 @@
 
 # Replace with the path to your yagarto install directory.
 # Note: Any paths with spaces in it must have quotes around them, like below:
-PREFIX ?= "/C/yagarto-20121222"
-# PREFIX ?= "/C/Linaro/gcc-linaro-5.3-2016.02-i686-mingw32_arm-eabi"
-# PREFIX ?= "/D/Linaro/"
-ARMGNU ?= $(PREFIX)/bin/arm-none-eabi
+# PREFIX ?= "/C/yagarto-20121222"
+PREFIX ?= "/home/sandstorm/x86_64_arm-linux-gnueabihf"
+ARMGNU ?= $(PREFIX)/bin/arm-linux-gnueabihf
 
 # Uncomment to create a C assembler listing
 CASM_LIST = -Wa,-adhln	> $(BUILD)$*.lst
@@ -68,10 +67,10 @@ BASEFLAGS   += -nostartfiles -ffreestanding -nodefaultlibs
 # BASEFLAGS   += -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -DPI2
 
 # Pi 2 compile flags
-BASEFLAGS += -O2 -mfpu=vfp -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7  -DPI2
+# BASEFLAGS += -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7  -DPI2
 
 # Pi 3 compile flags
-# BASEFLAGS   += -O2 -march=armv8-a -mtune=cortex-a53 -DPI2
+BASEFLAGS   += -O2 -march=armv8-a -mtune=cortex-a53 -DPI2
 
 # DEBUG MODE
 # BASEFLAGS += -DDBG
@@ -161,7 +160,7 @@ ASFLAGS     := $(INCLUDES) $(DEPENDFLAGS) -D__ASSEMBLY__
 
 ### C Flags ###
 CFLAGS      := $(INCLUDES) $(DEPENDFLAGS) $(BASEFLAGS) $(WARNFLAGS)
-CFLAGS      += -std=gnu99
+CFLAGS      += -std=c11
 
 ### C++ Flags ###
 CXXFLAGS    := $(INCLUDES) $(DEPENDFLAGS) $(BASEFLAGS) $(WARNFLAGS)
