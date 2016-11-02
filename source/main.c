@@ -45,13 +45,13 @@ int main()
         switch (ch)
         {
             case '1':
-                logic("f ", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
-                    "g ", "x'z'+xy+wy'z",
+                logic(" f", "w'x'y'z'+w'x'yz'+w'xy'z'+w'xyz+w'xyz'+wxy'z+wxyz+wxyz'+wx'y'z",
+                    " g", "x'z'+xy+wy'z",
                     "Boolean Equivalence");
                 break;
             case '2':
-                logic("R1", "b'd'+bcd'",
-                    "R2", "b'd'+a'bc",
+                logic("R1", "b'd'+bc",
+                    "R2", "b'd'+cd'",
                     "Don't Care");
                 break;
             case '3':
@@ -90,7 +90,7 @@ Params: input char array, current index
 */
 uint8_t calc(const char* input, int i)
 {
-    unsigned int size = length(input) - 1; //size minus null terminator
+    unsigned int size = length(input);
     uint8_t result = 0, tmp = 1; //Starts 1 or result will always be 0
     uint8_t not = 0; //Is bit inversed?
 
@@ -139,7 +139,7 @@ uint8_t calc(const char* input, int i)
         // reset tmp (tmp = 1),
         // skip character
         if (
-            (j+1 > size) 
+            (j+1 >= size) 
             ||
             ((j+1 < size) && (input[j+1] == '+'))
         )
