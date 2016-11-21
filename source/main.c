@@ -1,35 +1,35 @@
-#include "gpio.h"
-#include "system_timer.h"
 #include "uart.h"
+#include "printf.h"
 
-void blink_once()
-{
-    // Turn on GPIO 24
-    gpio[GPSET0] |= 1 << 24;
-
-    timer_delay_ms(500);
-
-    // Turn off GPIO 24
-    gpio[GPCLR0] |= 1 << 24;
-
-    timer_delay_ms(500);
-}
-
-void blink_code(uint32_t err)
-{
-    for(int i = 0; i < err; ++i)
-    {
-        blink_once();
-    }
-
-    // Only delay 4 seconds, since we delay for 1 additional
-    // second in blink_once().
-    timer_delay_ms(4500);
-}
+int testEncode();
+int testMultiply();
+int testAddition();
 
 int main()
 {
-    // Implement Lab 5 as described in the lab manual
+    // Provide a buffer size for debug prints
+    const int bufferSize = 80;
+    char buffer [bufferSize];
+    // Init uart for debugging purposes
+    init_uart();
+
+    testEncode();
+
+    testMultiply();
+
+    testAddition();
     
+    return 0;
+}
+
+int testEncode() {
+    return 0;
+}
+
+int testMultiply() {
+    return 0;
+}
+
+int testAddition() {
     return 0;
 }
