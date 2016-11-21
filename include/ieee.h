@@ -1,7 +1,10 @@
 #ifndef IEEE_H
 #define IEEE_H
 
-typedef struct {int32_t real; uint32_t fraction;} INT_FRACT;
+#include <stddef.h>
+#include <stdint.h>
+
+typedef struct {uint32_t real; uint32_t fraction;} INT_FRACT;
 
 #define IEEE_FLT uint32_t
 
