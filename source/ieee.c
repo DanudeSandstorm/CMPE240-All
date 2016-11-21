@@ -16,7 +16,12 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 	//Record the sign of the real number
 	uint32_t sign = ((num.real >> 31) & 1);
 	//then make the real number positive
-	num.real &= 0x7FFFFFFF; // 011...
+	if (sign == 0x1) {
+		//Convert from two's compliment
+		num.real ^= num.real; 
+		num.real++;
+	}
+	// num.real &= 0x7FFFFFFF;
 
 	// Keep track of the total number of shifts.
 	uint32_t shifts = 0;
@@ -36,7 +41,7 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 	// Shift the real number eight bits
 	// to the right and remove the implied 1. 
 	// This is the mantissa.
-	uint32_t mantissa = ((num.real >> 8) & 0xFF7FFFFF) ;
+	uint32_t mantissa = ((num.real >> 8) & 0x7FFFFF) ;
 
 	// Calculate the bias exponent by subtracting 
 	// the number of shifts from 158.
