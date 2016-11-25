@@ -8,7 +8,8 @@ This function will convert the integer and fractional number in
 IEEE_FLT IeeeEncode(INT_FRACT num) {
 	IEEE_FLT number;
 
-	if ((num.real == 0x0) && (num.fraction == 0x0)) {
+	//Check for negative or positive 0
+	if ((num.real == 0x0 || num.real == 0x80000000) && (num.fraction == 0x0)) {
 		number = 0x00000000;
 		return number;
 	}
@@ -16,10 +17,12 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 	//Record the sign of the real number
 	uint32_t sign = ((num.real >> 31) & 1);
 	//then make the real number positive
+	//Convert from two's compliment
 	if (sign == 0x1) {
-		//Convert from two's compliment
-		num.real ^= num.real; 
+		num.real = ~num.real; //bit flip
 		num.real++;
+		// printf("%d\r\n", num.real);
+		// printf("%08X\r\n", num.real);
 	}
 	// num.real &= 0x7FFFFFFF;
 
@@ -56,9 +59,22 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 }
 
 IEEE_FLT IeeeMult(IEEE_FLT a, IEEE_FLT b) {
-	return 0;
+	IEEE_FLT number;
+
+	//Check for 0 (positive/negative)
+	if ((a == 0x00000000 || a == 0x80000000) || (b == 0x00000000 || b == 0x80000000)) {
+		number = 0x00000000;
+		return number;
+	}
+
+	uint32_t exponent = (((a << (31-8)) + 127) + ((b << (31-8)) + 127)) - 127;
+	uint64_t mantissa = ((uint64_t)((a >> 8) | 0x800000) * (uint64_t)((b >> 8) | 0x800000));
+	uint32_t sign = (a << 31) ^ (b << 31); //XOR
+	
+	number = (sign << 31) | (exponent << (31-8)) | (uint32_t)(mantissa); 
+	return number;
 }
 
 IEEE_FLT IeeeAdd(IEEE_FLT a, IEEE_FLT b) {
-	return 0;
+	return 0x0;
 }
