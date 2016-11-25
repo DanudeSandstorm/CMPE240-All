@@ -30,15 +30,15 @@ int testEncode() {
     const uint32_t fraction[8] = {0x00000000, 0x00000000, 0x80000000, 0xC0000000, 0x20000000, 0xD5400000, 0x20000000, 0x00000000};
 
     printf("Testing Encoding\r\n");
-    printf("FYI Number\t\t| Integer\t\t| Fraction\t\t| IEEE\r\n");
+    printf("FYI Number\t| Integer\t| Fraction\t| IEEE\r\n");
     for (uint32_t i = 0; i < 8; i++) {
         INT_FRACT int_fract;
         int_fract.real = integer[i];
         int_fract.fraction = fraction[i];
         IEEE_FLT ieee = IeeeEncode(int_fract);
-        printf("%s\t  \t| 0x%08X\t  \t| 0x%08X\t  \t| 0x%08X\r\n", fyi[i], integer[i], fraction[i], ieee);
+        printf("%-16s| 0x%08X\t| 0x%08X\t| 0x%08X\r\n", fyi[i], integer[i], fraction[i], ieee);
     }
-
+    printf("\n");
     return 0;
 }
 
@@ -50,11 +50,12 @@ int testMultiply() {
     const uint32_t ieee2[7] = {0x3f800000, 0x3f800000, 0x3f000000, 0x41520000, 0xc1520000, 0x3f554000, 0x3f800000};
     
     printf("Testing Multiplication\r\n");
-    printf("IEEE\t\t| IEEE\t\t| IEEE Result\t\t| FYI Number\r\n");
+    printf("IEEE\t\t| IEEE\t\t| IEEE Result\t| FYI Number\r\n");
     for (uint32_t i = 0; i < 7; i++) {
         IEEE_FLT ieee = IeeeMult(ieee1[i], ieee2[i]);
-        printf("0x%08X\t \t| 0x%08X\t \t| 0x%08X\t \t| %s\r\n", ieee1[i], ieee2[i], ieee, fyi[i]);
+        printf("0x%08X\t| 0x%08X\t| 0x%08X\t| %s\r\n", ieee1[i], ieee2[i], ieee, fyi[i]);
     }
+    printf("\n");
     return 0;
 }
 
@@ -64,11 +65,11 @@ int testAddition() {
     const uint32_t ieee2[6] = {0x00000000, 0x3f800000, 0x3f000000, 0x41520000, 0xc1520000, 0x3f000000};
     
     printf("Testing Addition\r\n");
-    printf("IEEE\t\t| IEEE\t\t| IEEE Result\t\t| FYI Number\r\n");
+    printf("IEEE\t\t| IEEE\t\t| IEEE Result\t| FYI Number\r\n");
     for (uint32_t i = 0; i < 6; i++) {
         IEEE_FLT ieee = IeeeAdd(ieee1[i], ieee2[i]);
-        printf("0x%08X\t \t| 0x%08X\t \t| 0x%08X\t \t| %s\r\n", ieee1[i], ieee2[i], ieee, fyi[i]);
+        printf("0x%08X\t| 0x%08X\t| 0x%08X\t| %s\r\n", ieee1[i], ieee2[i], ieee, fyi[i]);
     }
-
+    printf("\n");
     return 0;
 }
