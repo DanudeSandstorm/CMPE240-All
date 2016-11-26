@@ -32,7 +32,7 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 		// and back fill the low bit of the real number 
 		// from the high bit of the fraction.
 		num.real = num.real << 1;
-		num.real = (num.real | (num.fraction >> 31) & 1);
+		num.real = ((num.real | (num.fraction >> 31)) & 1);
 
 		// Shift the fraction part one to the left.
 		num.fraction = num.fraction << 1;
@@ -65,12 +65,11 @@ IEEE_FLT IeeeMult(IEEE_FLT a, IEEE_FLT b) {
 	}
 
 	IEEE_FLT number;
-	uint32_t sign = (a << 31) ^ (b << 31); //XOR
+	uint32_t sign = (((a >> 31) ^ (b >> 31)) & 1); //XOR
 	//((exponent - bias) + (exponent - bias)) + bias;
 	uint32_t exponent = ((((a >> (31 - 8))) - 127) + (((b >> (31 - 8))) - 127)) + 127;
-	printf("%08X\r\n", exponent);
-	uint64_t mantissa = 0x0;//((uint64_t)((a >> 8) | 0x800000) * (uint64_t)((b >> 8) | 0x800000));
-	
+	//TODO mask exponent
+	uint64_t mantissa = ((uint64_t)((a & 0x00FFFFFF) * (uint64_t)(b & 0x00FFFFF)));
 
 	number = (sign << 31) | (exponent << (31 - 8)) | (uint32_t)(mantissa);
 	return number;
