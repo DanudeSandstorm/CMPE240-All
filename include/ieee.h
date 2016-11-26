@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "printf.h"
 
 typedef struct {uint32_t real; uint32_t fraction;} INT_FRACT;
 

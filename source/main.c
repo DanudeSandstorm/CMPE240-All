@@ -1,7 +1,7 @@
 #include "uart.h"
 #include "ieee.h"
-#include "printf.h"
 #include "debug.h"
+#include "printf.h"
 
 int testEncode();
 int testMultiply();
@@ -12,9 +12,11 @@ int main()
     // Provide a buffer size for debug prints
     const int bufferSize = 80;
     char buffer [bufferSize];
+
     // Init uart for debugging purposes
     init_uart();
 
+    //Run Tests
     testEncode();
 
     testMultiply();
