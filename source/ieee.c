@@ -71,9 +71,9 @@ IEEE_FLT IeeeMult(IEEE_FLT a, IEEE_FLT b) {
 
 	/* Exponent */
 	//((exponent - bias) + (exponent - bias))
-	//Re-add bias
-	uint32_t exponent = ((((a >> (31 - 8)) & 0xFF) - 127) + (((b >> (31 - 8)) & 0xFF) - 127));
-	exponent += 127;
+	//remove redudent bias
+	uint32_t exponent = ((((a >> (31 - 8)) & 0xFF)) + (((b >> (31 - 8)) & 0xFF)));
+	exponent -= 127;
 
 	/* Mantissa */
 	//Grab mantissa, add implied 1
