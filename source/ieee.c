@@ -65,28 +65,30 @@ IEEE_FLT IeeeMult(IEEE_FLT a, IEEE_FLT b) {
 	}
 
 	IEEE_FLT number;
+
+	/* Sign */
 	uint32_t sign = (((a >> 31) ^ (b >> 31)) & 1); //XOR
-	//((exponent - bias) + (exponent - bias));
-	uint32_t exponent = ((((a >> (31 - 8))) - 127) + (((b >> (31 - 8))) - 127));
 
-	//Mangissa
-	uint64_t longmantissa = ((uint64_t)((a & 0x00FFFFFF) * (uint64_t)(b & 0x00FFFFF)));
-	uint32_t mantissa;
+	/* Exponent */
+	//((exponent - bias) + (exponent - bias))
+	//Re-add bias
+	uint32_t exponent = ((((a >> (31 - 8)) & 0xFF) - 127) + (((b >> (31 - 8)) & 0xFF) - 127));
+	exponent += 127;
+
+	/* Mantissa */
+	//Grab mantissa, add implied 1
+	//multiply mantissas
+	uint64_t longmantissa = ((uint64_t)(a & 0x007FFFFF) | 0x800000) * ((uint64_t)(b & 0x007FFFFF) | 0x800000);
+	//Remove implied 1
+	longmantissa = longmantissa & 0x3FFFFFFFFFFF;
+	
+	//Re-Normilize
 	if (longmantissa != 0) {
-		uint32_t shifts = 0;
-		while (((longmantissa >> 63) & 1) != 1) {
-			longmantissa = longmantissa << 1;
-			shifts++;
-		}
-		mantissa = ((uint32_t)(longmantissa >> 8 + 32)) & 0x7FFFFF;
-		exponent += shifts;
+		exponent++; //increase exponent since 1 has gone over 1 place
+		longmantissa = (longmantissa >> (8 + 16)); //Shift numbers back into position
 	}
-	else {
-		mantissa = 0x0;
-	}
-
-	exponent += 127; //Re-add bias
-	number = (sign << 31) | (exponent << (31 - 8)) | mantissa;
+	
+	number = (sign << 31) | (exponent << (31 - 8)) | (uint32_t) longmantissa;
 	return number;
 }
 
