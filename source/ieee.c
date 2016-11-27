@@ -66,12 +66,27 @@ IEEE_FLT IeeeMult(IEEE_FLT a, IEEE_FLT b) {
 
 	IEEE_FLT number;
 	uint32_t sign = (((a >> 31) ^ (b >> 31)) & 1); //XOR
-	//((exponent - bias) + (exponent - bias)) + bias;
-	uint32_t exponent = ((((a >> (31 - 8))) - 127) + (((b >> (31 - 8))) - 127)) + 127;
-	//TODO mask exponent
-	uint64_t mantissa = ((uint64_t)((a & 0x00FFFFFF) * (uint64_t)(b & 0x00FFFFF)));
+	//((exponent - bias) + (exponent - bias));
+	uint32_t exponent = ((((a >> (31 - 8))) - 127) + (((b >> (31 - 8))) - 127));
 
-	number = (sign << 31) | (exponent << (31 - 8)) | (uint32_t)(mantissa);
+	//Mangissa
+	uint64_t longmantissa = ((uint64_t)((a & 0x00FFFFFF) * (uint64_t)(b & 0x00FFFFF)));
+	uint32_t mantissa;
+	if (longmantissa != 0) {
+		uint32_t shifts = 0;
+		while (((longmantissa >> 63) & 1) != 1) {
+			longmantissa = longmantissa << 1;
+			shifts++;
+		}
+		mantissa = ((uint32_t)(longmantissa >> 8 + 32)) & 0x7FFFFF;
+		exponent += shifts;
+	}
+	else {
+		mantissa = 0x0;
+	}
+
+	exponent += 127; //Re-add bias
+	number = (sign << 31) | (exponent << (31 - 8)) | mantissa;
 	return number;
 }
 
