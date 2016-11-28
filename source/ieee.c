@@ -163,10 +163,5 @@ IEEE_FLT IeeeAdd(IEEE_FLT a, IEEE_FLT b) {
 	
 	number = (sign << 31) | (exponent << (31 - 8)) | mantissa;
 
-	//Check for 0 (negative)
-	if (number == 0x80000000) {
-		number = 0x00000000;
-	}
-
 	return number;
 }
