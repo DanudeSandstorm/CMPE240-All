@@ -21,7 +21,7 @@ int main()
 
     testMultiply();
 
-    // testAddition();
+    testAddition();
     
     return 0;
 }
