@@ -1,7 +1,7 @@
 #include "ieee.h"
 
 /*
-This function will convert the integer and fractional number in 
+This function will convert the integer and fractional number in
 “num” into an IEEE single precision (32 bit) floating point number.
 */
 IEEE_FLT IeeeEncode(INT_FRACT num) {
@@ -32,7 +32,7 @@ IEEE_FLT IeeeEncode(INT_FRACT num) {
 		// and back fill the low bit of the real number 
 		// from the high bit of the fraction.
 		num.real = num.real << 1;
-		num.real = ((num.real | (num.fraction >> 31)) & 1);
+		num.real = (num.real | ((num.fraction >> 31) & 1));
 
 		// Shift the fraction part one to the left.
 		num.fraction = num.fraction << 1;
