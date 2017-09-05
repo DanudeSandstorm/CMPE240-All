@@ -1,0 +1,89 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             |.text|, CODE, READONLY 
+                                                            ; required
+    2 00000000                 ENTRY                        ; required
+    3 00000000 E3A01001        mov              r1, #1
+    4 00000004 E3A02002        mov              r2, #2
+    5 00000008 E59F3014        ldr              r3, =x      ; ADDRESS of X
+    6 0000000C E51F4008        ldr              r4, y       ; The VALUE of y 
+    7 00000010 E5935000        ldr              r5, [r3]    ; The VALUE of X 
+    8 00000014 E2456001        add              r6, r5, #-1 ; r5 = r4-1
+    9 00000018 E50F7008        str              r7, y       ; put r1 into x
+   10 0000001C E51F8008        ldr              r8, y       ; just checking
+   11 00000020 EAFFFFFE 
+                       Loop    B                Loop        ;infinite loop
+   12 00000024 00000000        AREA             UserData, DATA, READWRITE, ALIG
+N=3 
+                                                            ; required
+   13 00000000 0000000F 
+                       x       DCD              15          ; Note RPI uses  x:
+                                                             .int 15
+   14 00000004 0000BAD0 
+                       y       DCD              0xbad0
+   15 00000008                 END                          ; required
+Command Line: --debug --xref --diag_suppress=9931 --cpu=ARM9E --apcs=interwork 
+--depend=.\objects\example.d -o.\objects\example.o -IC:\Keil_v5\ARM\RV31\INC -I
+C:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION
+_VERSION SETA 521" --list=.\listings\example.lst Example.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 1 in file Example.s
+   Uses
+      None
+Comment: .text unused
+Loop 00000020
+
+Symbol: Loop
+   Definitions
+      At line 11 in file Example.s
+   Uses
+      At line 11 in file Example.s
+Comment: Loop used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+UserData 00000000
+
+Symbol: UserData
+   Definitions
+      At line 12 in file Example.s
+   Uses
+      None
+Comment: UserData unused
+x 00000000
+
+Symbol: x
+   Definitions
+      At line 13 in file Example.s
+   Uses
+      At line 5 in file Example.s
+Comment: x used once
+y 00000004
+
+Symbol: y
+   Definitions
+      At line 14 in file Example.s
+   Uses
+      At line 6 in file Example.s
+      At line 9 in file Example.s
+      At line 10 in file Example.s
+
+3 symbols
+339 symbols in table
